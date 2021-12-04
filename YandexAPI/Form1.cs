@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using YandexDisk.Client.Http;
+using YandexDisk.Client.Clients;
 using YandexDisk.Client.Protocol;
 using System.IO;
 
@@ -41,7 +42,7 @@ namespace YandexAPI
             foreach (var item in FileData1.Embedded.Items)
             {
                 //MessageBox.Show(item.Name);
-                a += item.Name.ToString() + "\t"+item.Type+"\n";
+                a += item.Name.ToString() + "      "+item.Type+"\n";
             }
             label1.Text = a;
 
@@ -99,7 +100,7 @@ namespace YandexAPI
                 foreach (var item in FileData1.Embedded.Items)
                 {
                     //MessageBox.Show(item.Name);
-                    a += item.Name.ToString() + "\t" + item.Type + "\n";
+                    a += item.Name.ToString() + "      " + item.Type + "\n";
                 }
                 label3.Text = a;
             }
@@ -107,6 +108,35 @@ namespace YandexAPI
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+        public async void DownloadSelectedFile()
+        {
+            try
+            {
+                api = new DiskHttpApi("AQAAAAAaPvlcAAeKXT1kcOTXzkdQmUTwbSQfRrQ");
+                var Path2download = Path.Combine(Environment.CurrentDirectory, "downloads");
+                if (!Directory.Exists(Path2download))
+                {
+                    Directory.CreateDirectory(Path2download);
+                }
+                var FileData1 = await api.MetaInfo.GetInfoAsync(new ResourceRequest { Path = "/" + textBox1.Text });
+                await api.Files.DownloadFileAsync(path: "/" + textBox1.Text + "/" + textBox2.Text, Path.Combine(Path2download, textBox2.Text));
+                //foreach (var item in FileData1.Embedded.Items)
+                //{
+                //    await api.Files.DownloadFileAsync(path: item.Path, Path.Combine(Path2download,item.Name));
+                //}
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            DownloadSelectedFile();
         }
     }
 }
