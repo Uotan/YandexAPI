@@ -138,5 +138,34 @@ namespace YandexAPI
         {
             DownloadSelectedFile();
         }
+
+        private void panel1_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
+            {
+                e.Effect = DragDropEffects.All;
+            }
+        }
+
+        private async void panel1_DragEnter(object sender, DragEventArgs e)
+        {
+            string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (var files in droppedFiles)
+            {
+                try
+                {
+                    api = new DiskHttpApi("AQAAAAAaPvlcAAeKXT1kcOTXzkdQmUTwbSQfRrQ");
+                    var link = await api.Files.GetUploadLinkAsync("/" + textBox1.Text + "/" + Path.GetFileName(files), overwrite: false);
+                    using (var fs = File.OpenRead(files))
+                    {
+                        await api.Files.UploadAsync(link, fs);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
     }
 }
