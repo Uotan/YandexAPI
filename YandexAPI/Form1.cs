@@ -11,6 +11,9 @@ using YandexDisk.Client.Http;
 using YandexDisk.Client.Clients;
 using YandexDisk.Client.Protocol;
 using System.IO;
+using System.Net.Http;
+using System.Net;
+using System.Collections.Specialized;
 
 namespace YandexAPI
 {
@@ -149,16 +152,34 @@ namespace YandexAPI
 
         private async void panel1_DragEnter(object sender, DragEventArgs e)
         {
+            HttpClient client = new HttpClient();
             string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (var files in droppedFiles)
             {
+                //try
+                //{
+                //    api = new DiskHttpApi("AQAAAAAaPvlcAAeKXT1kcOTXzkdQmUTwbSQfRrQ");
+                //    var link = await api.Files.GetUploadLinkAsync("/" + textBox1.Text + "/" + Path.GetFileName(files), overwrite: false);
+                //    using (var fs = File.OpenRead(files))
+                //    {
+                //        await api.Files.UploadAsync(link, fs);
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //}
                 try
                 {
-                    api = new DiskHttpApi("AQAAAAAaPvlcAAeKXT1kcOTXzkdQmUTwbSQfRrQ");
-                    var link = await api.Files.GetUploadLinkAsync("/" + textBox1.Text + "/" + Path.GetFileName(files), overwrite: false);
-                    using (var fs = File.OpenRead(files))
+                    byte[] imageArray = File.ReadAllBytes(files);
+                    string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+                    using (WebClient client1 = new WebClient())
                     {
-                        await api.Files.UploadAsync(link, fs);
+                        NameValueCollection param = new NameValueCollection();
+                        param.Add("key", "04260c2bd7f6a34ce3ee4459e5991e56");
+                        param.Add("image", base64ImageRepresentation);
+                        var resp = client1.UploadValues("https://api.imgbb.com/1/upload", "POST", param);
+                        var str = System.Text.Encoding.Default.GetString(resp);
                     }
                 }
                 catch (Exception ex)
@@ -166,6 +187,11 @@ namespace YandexAPI
                     MessageBox.Show(ex.Message);
                 }
             }
+        }
+
+        private void panel1_DragLeave(object sender, EventArgs e)
+        {
+
         }
     }
 }
