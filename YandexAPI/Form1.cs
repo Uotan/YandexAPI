@@ -83,7 +83,15 @@ namespace YandexAPI
                 //без фильтров
                 //_fileDialog.Filter = "Image Files (*.bmp,*.png,*.jpg,*.jpeg)|*.bmp;*.png;*.jpg;*.jpeg";
                 _fileDialog.ShowDialog();
-                var link = await api.Files.GetUploadLinkAsync("/" + tbFolderName.Text + "/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                Link link;
+                if (tbFolderName.Text=="")
+                {
+                    link = await api.Files.GetUploadLinkAsync("/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                }
+                else
+                {
+                    link = await api.Files.GetUploadLinkAsync("/" + tbFolderName.Text + "/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                }
                 using (var fs = File.OpenRead(_fileDialog.FileName))
                 {
                     await api.Files.UploadAsync(link, fs);
@@ -174,13 +182,21 @@ namespace YandexAPI
                 }
                 foreach (var fileInList in filepaths)
                 {
-                    MessageBox.Show(Path.GetFileNameWithoutExtension(fileInList));
+                    //MessageBox.Show(Path.GetFileNameWithoutExtension(fileInList));
                     if (radioButton1.Checked == true)
                     {
                         //Это для Яндекса
                         //*************************************
                         api = new DiskHttpApi("AQAAAAAaPvlcAAeKXT1kcOTXzkdQmUTwbSQfRrQ");
-                        var link = await api.Files.GetUploadLinkAsync("/" + tbFileName.Text + "/" + Path.GetFileName(fileInList), overwrite: false);
+                        Link link;
+                        if (tbFolderName.Text == "")
+                        {
+                            link = await api.Files.GetUploadLinkAsync("/" + Path.GetFileName(fileInList), overwrite: false);
+                        }
+                        else
+                        {
+                            link = await api.Files.GetUploadLinkAsync("/" + tbFolderName.Text + "/" + Path.GetFileName(fileInList), overwrite: false);
+                        }
                         using (var fs = File.OpenRead(fileInList))
                         {
                             await api.Files.UploadAsync(link, fs);

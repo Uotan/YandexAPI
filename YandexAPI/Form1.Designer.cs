@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.button1 = new System.Windows.Forms.Button();
             this.infoLabel = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
@@ -102,7 +103,7 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(549, 23);
             this.button3.TabIndex = 5;
-            this.button3.Text = "Загрузить файл";
+            this.button3.Text = "Загрузить файл на ЯндексДиск";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -233,6 +234,7 @@
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
