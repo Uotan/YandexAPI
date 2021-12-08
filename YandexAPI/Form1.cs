@@ -252,5 +252,37 @@ namespace YandexAPI
         {
             label4.Text = "Перетащи сюда файлы!";
         }
+
+        private async void panel1_Click(object sender, EventArgs e)
+        {
+            //асинхронная загрузка файла на Яндекс Диск
+            try
+            {
+                api = new DiskHttpApi("AQAAAAAaPvlcAAeKXT1kcOTXzkdQmUTwbSQfRrQ");
+                OpenFileDialog _fileDialog = new OpenFileDialog();
+                _fileDialog.Title = "chose file 2 load";
+                _fileDialog.Filter = "All Files|*.*";
+                //без фильтров
+                //_fileDialog.Filter = "Image Files (*.bmp,*.png,*.jpg,*.jpeg)|*.bmp;*.png;*.jpg;*.jpeg";
+                _fileDialog.ShowDialog();
+                Link link;
+                if (tbFolderName.Text == "")
+                {
+                    link = await api.Files.GetUploadLinkAsync("/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                }
+                else
+                {
+                    link = await api.Files.GetUploadLinkAsync("/" + tbFolderName.Text + "/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                }
+                using (var fs = File.OpenRead(_fileDialog.FileName))
+                {
+                    await api.Files.UploadAsync(link, fs);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }

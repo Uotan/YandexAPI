@@ -147,17 +147,19 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(545, 214);
             this.panel1.TabIndex = 10;
+            this.panel1.Click += new System.EventHandler(this.panel1_Click);
             this.panel1.DragDrop += new System.Windows.Forms.DragEventHandler(this.panel1_DragDrop);
             this.panel1.DragEnter += new System.Windows.Forms.DragEventHandler(this.panel1_DragEnter);
             this.panel1.DragLeave += new System.EventHandler(this.panel1_DragLeave);
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(148, 76);
+            this.label4.Location = new System.Drawing.Point(89, 74);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(223, 70);
+            this.label4.Size = new System.Drawing.Size(374, 70);
             this.label4.TabIndex = 11;
-            this.label4.Text = "Перетащи сюда файлы";
+            this.label4.Text = "Перетащи сюда файлы (выбрать сервер из списка ниже)\r\nили \r\nКликните по области (д" +
+    "ля ЯндексДиска)";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
