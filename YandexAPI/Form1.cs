@@ -213,6 +213,8 @@ namespace YandexAPI
                             //задаем параметры для коллекции
                             NameValueCollection param = new NameValueCollection();
                             param.Add("key", "04260c2bd7f6a34ce3ee4459e5991e56");
+                            //удалится через 3 дня
+                            param.Add("expiration", "259200");
                             param.Add("image", base64ImageRepresentation);
                             //делаем запрос методом POST и получем массив байтов
                             var response = client.UploadValues("https://api.imgbb.com/1/upload", "POST", param);
@@ -258,25 +260,66 @@ namespace YandexAPI
             //асинхронная загрузка файла на Яндекс Диск
             try
             {
-                api = new DiskHttpApi("AQAAAAAaPvlcAAeKXT1kcOTXzkdQmUTwbSQfRrQ");
-                OpenFileDialog _fileDialog = new OpenFileDialog();
-                _fileDialog.Title = "chose file 2 load";
-                _fileDialog.Filter = "All Files|*.*";
-                //без фильтров
-                //_fileDialog.Filter = "Image Files (*.bmp,*.png,*.jpg,*.jpeg)|*.bmp;*.png;*.jpg;*.jpeg";
-                _fileDialog.ShowDialog();
-                Link link;
-                if (tbFolderName.Text == "")
+                if (radioButton1.Checked == true)
                 {
-                    link = await api.Files.GetUploadLinkAsync("/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                    OpenFileDialog _fileDialog = new OpenFileDialog();
+                    _fileDialog.Title = "chose file 2 load";
+                    _fileDialog.Filter = "All Files|*.*";
+                    //без фильтров
+                    //_fileDialog.Filter = "Image Files (*.bmp,*.png,*.jpg,*.jpeg)|*.bmp;*.png;*.jpg;*.jpeg";
+                    _fileDialog.ShowDialog();
+                    //Это для Яндекса
+                    //*************************************
+                    api = new DiskHttpApi("AQAAAAAaPvlcAAeKXT1kcOTXzkdQmUTwbSQfRrQ");
+                    Link link;
+                    if (tbFolderName.Text == "")
+                    {
+                        link = await api.Files.GetUploadLinkAsync("/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                    }
+                    else
+                    {
+                        link = await api.Files.GetUploadLinkAsync("/" + tbFolderName.Text + "/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                    }
+                    using (var fs = File.OpenRead(_fileDialog.FileName))
+                    {
+                        await api.Files.UploadAsync(link, fs);
+                    }
                 }
-                else
+                else if (radioButton2.Checked == true)
                 {
-                    link = await api.Files.GetUploadLinkAsync("/" + tbFolderName.Text + "/" + Path.GetFileName(_fileDialog.FileName), overwrite: false);
+                    OpenFileDialog _fileDialog = new OpenFileDialog();
+                    _fileDialog.Title = "chose file 2 load";
+                    //_fileDialog.Filter = "All Files|*.*";
+                    //без фильтров
+                    _fileDialog.Filter = "Image Files (*.bmp,*.png,*.jpg,*.jpeg)|*.bmp;*.png;*.jpg;*.jpeg";
+                    _fileDialog.ShowDialog();
+                    //массив байтов файла
+                    byte[] imageArray = File.ReadAllBytes(_fileDialog.FileName);
+                    //конвертируем в base64
+                    string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+                    using (WebClient client = new WebClient())
+                    {
+                        //задаем параметры для коллекции
+                        NameValueCollection param = new NameValueCollection();
+                        param.Add("key", "04260c2bd7f6a34ce3ee4459e5991e56");
+                        //удалится через 3 дня
+                        param.Add("expiration", "259200");
+                        param.Add("image", base64ImageRepresentation);
+                        //делаем запрос методом POST и получем массив байтов
+                        var response = client.UploadValues("https://api.imgbb.com/1/upload", "POST", param);
+                        //декодируем
+                        var jsonResponse = Encoding.Default.GetString(response);
+                        //десериализуем
+                        ImageDataJSON UploadedImageData = JsonConvert.DeserializeObject<ImageDataJSON>(jsonResponse);
+                        //скопируем URL в буфер обмена
+                        Clipboard.SetData(DataFormats.Text, (Object)UploadedImageData.data.image.url);
+                        //MessageBox.Show(UploadedImageData.data.image.url);
+
+                    }
                 }
-                using (var fs = File.OpenRead(_fileDialog.FileName))
+                else if (radioButton3.Checked == true)
                 {
-                    await api.Files.UploadAsync(link, fs);
+                    MessageBox.Show("потом сделаю");
                 }
             }
             catch (Exception ex)
